@@ -9,36 +9,9 @@ A fast, keyboard-first code snippet manager for macOS and Linux. Runs in the bac
 | `Cmd+Shift+`` ` | Open snippet picker |
 | `Ctrl+Cmd+C` | Save selected text as a snippet |
 
-## Requirements
+## Install
 
-- Python 3.11+
-- macOS 12+ or Linux (X11; Wayland has limited hotkey support)
-
-## Build and install
-
-Clone the repo and install dev dependencies:
-
-```bash
-git clone https://github.com/yourname/bytesnip.git
-cd bytesnip
-pip install -e ".[dev,macos]"   # macOS
-pip install -e ".[dev,linux]"   # Linux
-```
-
-Then build the app:
-
-```bash
-make install-macos   # builds and copies to ~/Applications/ByteSnip.app
-make install-linux   # builds and copies to ~/.local/bin/bytesnip
-```
-
-Or just build without installing:
-
-```bash
-make build
-# → dist/ByteSnip.app  (macOS)  — drag to /Applications
-# → dist/ByteSnip/     (Linux)  — run dist/ByteSnip/ByteSnip
-```
+Download the latest `ByteSnip-vX.X.X.dmg` from the [Releases](../../releases) page, open it, and drag **ByteSnip.app** to your Applications folder.
 
 ### macOS permissions
 
@@ -61,6 +34,32 @@ Select text in any app, press the hotkey. ByteSnip captures it, auto-detects the
 
 **Settings**
 Click the menu-bar icon → Settings to remap hotkeys, toggle search-in-body, and enable run-at-login.
+
+## Development
+
+Requirements: Python 3.11+, macOS 12+ or Linux (X11).
+
+```bash
+git clone https://github.com/yourname/bytesnip.git
+cd bytesnip
+pip install -e ".[dev,macos]"   # macOS
+pip install -e ".[dev,linux]"   # Linux
+```
+
+| Command | Description |
+| --- | --- |
+| `make test` | Run tests |
+| `make lint` | Ruff + mypy |
+| `make build` | Build `dist/ByteSnip.app` via PyInstaller |
+| `make dmg` | Full clean build + create `dist/ByteSnip-vX.X.X.dmg` |
+| `make reset-db` | Wipe all snippets, folders, and tags |
+
+Releases are published automatically via GitHub Actions when a tag is pushed:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
 
 ## License
 
