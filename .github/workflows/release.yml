@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-macos:
+    name: Build macOS DMG
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install ".[macos]" pyinstaller
+
+      - name: Generate icns icon
+        run: python scripts/make_icns.py
+
+      - name: Build app bundle
+        run: pyinstaller ByteSnip.spec --clean
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Create DMG
+        run: |
+          mkdir -p dist/dmg_stage
+          cp -r dist/ByteSnip.app dist/dmg_stage/
+          create-dmg \
+            --volname "ByteSnip" \
+            --window-pos 200 120 \
+            --window-size 600 380 \
+            --icon-size 128 \
+            --icon "ByteSnip.app" 150 185 \
+            --hide-extension "ByteSnip.app" \
+            --app-drop-link 450 185 \
+            "dist/ByteSnip-${{ github.ref_name }}.dmg" \
+            "dist/dmg_stage/"
+          rm -rf dist/dmg_stage
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "dist/ByteSnip-${{ github.ref_name }}.dmg"
+          generate_release_notes: true
